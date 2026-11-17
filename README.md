@@ -23,4 +23,6 @@ A responsive web application for reporting lost/found items at Uganda Christian 
 
 ## Setup Instructions
 
+Status: Setup complete.
+
 _(To be completed during Milestone 5)_
