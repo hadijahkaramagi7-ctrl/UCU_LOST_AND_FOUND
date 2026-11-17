@@ -5,7 +5,7 @@ import "./App.css";
 
 // YOUR WORK: The Homepage Component
 const Home = () => (
-  <div>
+  <div style={{ minHeight: "80vh" }}>
     {/* Hero Section */}
     <div
       style={{
@@ -23,6 +23,34 @@ const Home = () => (
         The official platform to report lost items and return found items on
         campus.
       </p>
+
+      {/* Search Bar */}
+      <div style={{ marginBottom: "2rem" }}>
+        <input
+          type="text"
+          placeholder="Search for keys, phones, books..."
+          style={{
+            padding: "12px",
+            width: "300px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+            marginRight: "10px",
+          }}
+        />
+        <button
+          style={{
+            padding: "12px 20px",
+            backgroundColor: "#003366",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Search
+        </button>
+      </div>
+
       <div>
         <a
           href="/report-lost"
@@ -74,10 +102,11 @@ const Home = () => (
             borderRadius: "8px",
             width: "250px",
             backgroundColor: "white",
+            boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           }}
         >
           <h3 style={{ margin: "0 0 10px 0" }}>Lost: Black Backpack</h3>
-          <p style={{ color: "#666" }}>Location: Library</p>
+          <p style={{ color: "#666", margin: 0 }}>Location: Library</p>
         </div>
         <div
           style={{
@@ -86,25 +115,51 @@ const Home = () => (
             borderRadius: "8px",
             width: "250px",
             backgroundColor: "white",
+            boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           }}
         >
           <h3 style={{ margin: "0 0 10px 0" }}>Found: Set of Keys</h3>
-          <p style={{ color: "#666" }}>Location: N5B</p>
+          <p style={{ color: "#666", margin: 0 }}>Location: N5B</p>
         </div>
       </div>
     </div>
   </div>
 );
 
+// YOUR WORK: The Footer Component
+const Footer = () => (
+  <footer
+    style={{
+      backgroundColor: "#003366",
+      color: "white",
+      textAlign: "center",
+      padding: "1.5rem",
+      marginTop: "auto",
+    }}
+  >
+    <p style={{ margin: "0 0 5px 0" }}>
+      © 2026 Uganda Christian University Lost & Found
+    </p>
+    <p style={{ margin: 0, fontSize: "0.9rem", color: "#ccc" }}>
+      A project for CSC1202 Web and Mobile Applications Development
+    </p>
+  </footer>
+);
+
 function App() {
   return (
     <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        {/* Sarah will add her <Route path="/login" ... /> here later */}
-        {/* Norah will add her <Route path="/search" ... /> here later */}
-      </Routes>
+      <div
+        style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
+      >
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          {/* Sarah will add her <Route path="/login" ... /> here later */}
+          {/* Norah will add her <Route path="/search" ... /> here later */}
+        </Routes>
+        <Footer />
+      </div>
     </Router>
   );
 }
