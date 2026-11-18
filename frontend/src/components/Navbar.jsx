@@ -1,45 +1,28 @@
-import React from "react";
+import { Link } from "react-router-dom";
 
-const Navbar = () => {
+export default function Navbar() {
   return (
     <nav
       style={{
-        backgroundColor: "#003366", // UCU Blue
-        color: "white",
-        padding: "1rem 2rem",
+        padding: "15px",
+        backgroundColor: "#003366",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
       }}
     >
-      <h2>UCU Lost & Found</h2>
-      <ul style={{ display: "flex", listStyle: "none", gap: "20px" }}>
-        <li>
-          <a href="/" style={{ color: "white", textDecoration: "none" }}>
-            Home
-          </a>
-        </li>
-        <li>
-          <a href="/search" style={{ color: "white", textDecoration: "none" }}>
-            Search Items
-          </a>
-        </li>
-        <li>
-          <a href="/login" style={{ color: "white", textDecoration: "none" }}>
-            Login
-          </a>
-        </li>
-        <li>
-          <a
-            href="/register"
-            style={{ color: "white", textDecoration: "none" }}
-          >
-            Register
-          </a>
-        </li>
-      </ul>
+      <h2 style={{ color: "white", margin: 0 }}>UCU Lost & Found</h2>
+      <div style={{ display: "flex", gap: "15px" }}>
+        <Link to="/" style={{ color: "white", textDecoration: "none" }}>
+          Home
+        </Link>
+        <Link to="/login" style={{ color: "white", textDecoration: "none" }}>
+          Login
+        </Link>
+        <Link to="/register" style={{ color: "white", textDecoration: "none" }}>
+          Register
+        </Link>
+      </div>
     </nav>
   );
-};
-
-export default Navbar;
+}
