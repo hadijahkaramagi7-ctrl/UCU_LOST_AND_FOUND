@@ -47,7 +47,7 @@ export default function Login() {
             style={{ width: '100%', padding: '8px' }}
           />
         </div>
-        <button type="submit" style={{ padding: '10px', backgroundColor: '#003366', color: 'white' }}>
+        <button type="submit" style={{ padding: '10px', backgroundColor: '#d31f73', color: 'white' }}>
           Login
         </button>
       </form>
