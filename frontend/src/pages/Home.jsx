@@ -13,7 +13,7 @@ export default function Home() {
 
       <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
         <Link
-          to="/report-lost"
+          to="/report/lost"
           style={{
             padding: "12px 24px",
             backgroundColor: "#00cccc",
@@ -25,7 +25,7 @@ export default function Home() {
           Report a Lost Item
         </Link>
         <Link
-          to="/report-found"
+          to="/report/found"
           style={{
             padding: "12px 24px",
             backgroundColor: "#366600",
