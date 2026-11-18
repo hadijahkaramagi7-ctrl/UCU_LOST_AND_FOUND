@@ -4,7 +4,8 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { ReportRoute } from "./pages/Report";
-
+import Items from "./pages/Items";
+import ItemDetail from "./pages/ItemDetail";
 
 function App() {
   return (
@@ -18,6 +19,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/report" element={<ReportRoute />} />
         <Route path="/report/:type" element={<ReportRoute />} />
+        <Route path="/items" element={<Items />} />
+        <Route path="/items/:id" element={<ItemDetail />} />
       </Routes>
     </Router>
   );
