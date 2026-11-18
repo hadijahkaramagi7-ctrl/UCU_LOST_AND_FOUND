@@ -1,5 +1,7 @@
+import axios from "axios";
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios'; // <-- Added this
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -7,19 +9,29 @@ export default function Login() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  // <-- Replaced the inside of this function
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
 
     try {
-      // We will connect this to the backend later
-      // For now, we simulate a successful login
-      if (!email || !password) throw new Error("Please fill in all fields");
+      const response = await axios.post('http://localhost:5000/api/auth/login', {
+        email: email,
+        password: password
+      });
       
-      console.log("Logging in with:", email);
-      navigate('/'); // Redirect to homepage after login
+      // Save the token to the browser's local storage
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      
+      alert("Login successful!");
+      navigate('/'); // Redirect to home page
     } catch (err) {
-      setError(err.message);
+      if (err.response && err.response.data) {
+        setError(err.response.data.error);
+      } else {
+        setError("Server error. Please try again.");
+      }
     }
   };
 
@@ -47,7 +59,7 @@ export default function Login() {
             style={{ width: '100%', padding: '8px' }}
           />
         </div>
-        <button type="submit" style={{ padding: '10px', backgroundColor: '#d31f73', color: 'white' }}>
+        <button type="submit" style={{ padding: '10px', backgroundColor: '#003366', color: 'white' }}>
           Login
         </button>
       </form>
