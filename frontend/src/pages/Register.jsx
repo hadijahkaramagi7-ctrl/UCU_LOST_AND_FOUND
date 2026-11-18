@@ -1,5 +1,7 @@
+import axios from "axios";
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios'; // <-- Added this
 
 export default function Register() {
   const [name, setName] = useState('');
@@ -7,11 +9,26 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleRegister = (e) => {
+  // <-- Replaced the inside of this function
+  const handleRegister = async (e) => {
     e.preventDefault();
-    console.log("Registering:", { name, email, password });
-    // Navigate to login after successful registration (to be connected to backend later)
-    navigate('/login');
+    
+    try {
+      await axios.post('http://localhost:5000/api/auth/register', {
+        name: name,
+        email: email,
+        password: password
+      });
+      
+      alert("Registration successful! Please log in.");
+      navigate('/login');
+    } catch (err) {
+      if (err.response && err.response.data) {
+        alert(err.response.data.error);
+      } else {
+        alert("Server error. Please try again.");
+      }
+    }
   };
 
   return (
