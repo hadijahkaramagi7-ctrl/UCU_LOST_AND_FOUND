@@ -16,10 +16,10 @@ export const reportedItems = [
     id: 2,
     status: "FOUND",
     name: "Black Wallet",
-    location: "Cafeteria",
+    location: "Guild Canteen",
     date: "17 Nov 2026",
     description:
-      "A black wallet was found in the cafeteria. It is being held by the Lost and Found office pending owner verification.",
+      "A black wallet was found in the Guild Canteen. It is being held by the Lost and Found office pending owner verification.",
   },
   {
     id: 3,
