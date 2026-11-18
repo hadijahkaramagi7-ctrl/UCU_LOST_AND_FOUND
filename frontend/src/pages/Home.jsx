@@ -18,7 +18,7 @@ export default function Home() {
       id: 2,
       status: "FOUND",
       name: "Black Wallet",
-      location: "Cafeteria",
+      location: "Guild Canteen",
       date: "17 Nov 2026",
     },
     {
@@ -46,7 +46,7 @@ export default function Home() {
       id: 6,
       status: "FOUND",
       name: "Glasses",
-      location: "Cafeteria",
+      location: "Guild Canteen",
       date: "13 Nov 2026",
     },
   ];
