@@ -67,13 +67,28 @@ Our system serves three distinct user roles:
 - **Validation:** Both frontend and backend validation with clear error messages.
 - **Persistence:** MySQL database; data survives server restarts.
 
-## 6. Group Roles
+## 6. Group Roles (6 Members)
 
 To ensure individual contribution is verifiable via Git history, work is divided as follows:
 
-1. NAKAFEERO HADIJAH KARAMAGI: Backend Auth, Security, Middleware, Deployment.
-2. APARO OLIVE CONSOLATE: Backend Reports (CRUD, Search, Image Upload).
-3. AMPUMUZA ESTHER: Backend Claims & Admin logic (DB rules, Approvals).
-4. NABUKENYA SARAH: Frontend Core (React setup, Auth UI, Routing).
-5. MIREMBE NORAH: Frontend Features (Search UI, Report Forms, Claim Forms).
-6. WINYI MELVIN: QA & Documentation (Test Plans, README, Final Report).
+1. **Nakafeero Hadijah Karamagi (`@hadijahkaramagi7-ctrl`):** Homepage and Navigation (`/frontend/src/components/`).
+2. **Aparo Olive Consolate (`@aparoolive9-blip`):** Overall Project Responsibility, Claims and Administration (`/frontend/src/pages/claims/` and `/frontend/src/pages/admin/`).
+3. **Ampumuza Esther (`@ampumuzaesther783`):** Backend and Database (`/backend/` and `/database/`).
+4. **Nabukenya Sarah (`@sarahsashaw26-oss`):** Authentication (`/frontend/src/pages/auth/`).
+5. **Mirembe Norah (`@mirembenorah`):** Lost and Found Reports (`/frontend/src/pages/reports/`).
+6. **Winyi Melvin:** QA, Testing, and Documentation.
+
+## 7. Database Design and Wireframes
+
+### Database Entity-Relationship Diagram (ERD)
+
+Our database design uses a relational structure with three main tables: Users, Reports, and Claims. The system ensures data privacy by separating public report details from private claim evidence.
+
+### Wireframes
+
+We designed mobile and desktop wireframes for the main workflows:
+
+1. **Authentication:** Login and Register pages.
+2. **Search & Browse:** Filtering by location, date, and item type.
+3. **Reporting:** Forms for lost items and found items (with private identification fields).
+4. **Admin Dashboard:** Reviewing claims and confirming returns.
