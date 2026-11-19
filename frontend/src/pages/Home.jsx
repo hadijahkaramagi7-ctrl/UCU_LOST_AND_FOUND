@@ -1,55 +1,45 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Home.css";
 
 export default function Home() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [recentlyReportedItems, setRecentlyReportedItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
-  const recentlyReportedItems = [
-    {
-      id: 1,
-      status: "LOST",
-      name: "Student ID",
-      location: "Ham Mukasa Library",
-      date: "18 Nov 2026",
-    },
-    {
-      id: 2,
-      status: "FOUND",
-      name: "Black Wallet",
-      location: "Guild Canteen",
-      date: "17 Nov 2026",
-    },
-    {
-      id: 3,
-      status: "LOST",
-      name: "iPhone 11",
-      location: "Lecture Room B2",
-      date: "16 Nov 2026",
-    },
-    {
-      id: 4,
-      status: "FOUND",
-      name: "Keychain",
-      location: "Main Entrance",
-      date: "15 Nov 2026",
-    },
-    {
-      id: 5,
-      status: "LOST",
-      name: "Textbook",
-      location: "Library Study Room",
-      date: "14 Nov 2026",
-    },
-    {
-      id: 6,
-      status: "FOUND",
-      name: "Glasses",
-      location: "Guild Canteen",
-      date: "13 Nov 2026",
-    },
-  ];
+  useEffect(() => {
+    fetch("http://localhost:5000/api/reports")
+      .then((response) => {
+        if (!response.ok) throw new Error("Failed to fetch reports");
+        return response.json();
+      })
+      .then((reports) => {
+        const normalizedReports = reports
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+          .map((report) => ({
+            id: report.id,
+            status: report.type?.toUpperCase() || "LOST",
+            name: report.title,
+            location: report.location,
+            date: new Intl.DateTimeFormat("en-GB", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+              timeZone: "UTC",
+            }).format(new Date(report.event_date || report.created_at)),
+          }));
+
+        setRecentlyReportedItems(normalizedReports);
+      })
+      .catch((error) => {
+        console.error(error);
+        setLoadError(true);
+        setRecentlyReportedItems([]);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   const filteredItems = recentlyReportedItems.filter((item) => {
     const query = searchQuery.trim().toLowerCase();
@@ -65,6 +55,14 @@ export default function Home() {
   const handleSearch = (event) => {
     event.preventDefault();
   };
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (loadError) {
+    return <p>Failed to load reports. Please try again later.</p>;
+  }
 
   return (
     <div className="home-page">
@@ -126,7 +124,11 @@ export default function Home() {
         <section className="items-section">
           <h2>Recently Reported Items</h2>
           <div className="items-grid">
-            {filteredItems.length > 0 ? (
+            {loading ? (
+              <p className="no-items-found">Loading...</p>
+            ) : loadError ? (
+              <p className="no-items-found">Failed to load items</p>
+            ) : filteredItems.length > 0 ? (
               filteredItems.map((item) => (
                 <article className="item-card" key={item.id}>
                   <span className={`item-status ${item.status.toLowerCase()}`}>
@@ -141,7 +143,9 @@ export default function Home() {
                 </article>
               ))
             ) : (
-              <p className="no-items-found">No items found</p>
+              <p className="no-items-found">
+                {searchQuery ? "No items found" : "No items reported yet"}
+              </p>
             )}
           </div>
 
