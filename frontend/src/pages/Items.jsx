@@ -1,67 +1,48 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Items.css";
-
-export const reportedItems = [
-  {
-    id: 1,
-    status: "LOST",
-    name: "Student ID",
-    location: "Ham Mukasa Library",
-    date: "18 Nov 2026",
-    description:
-      "Student identification card reported lost at Ham Mukasa Library. Please bring your student number and a valid ID to verify ownership before claiming.",
-  },
-  {
-    id: 2,
-    status: "FOUND",
-    name: "Black Wallet",
-    location: "Guild Canteen",
-    date: "17 Nov 2026",
-    description:
-      "A black wallet was found in the Guild Canteen. It is being held by the Lost and Found office pending owner verification.",
-  },
-  {
-    id: 3,
-    status: "LOST",
-    name: "iPhone 11",
-    location: "Lecture Room B2",
-    date: "16 Nov 2026",
-    description:
-      "An iPhone 11 was reported missing from Lecture Room B2. Please contact the office with identifiable details before collection.",
-  },
-  {
-    id: 4,
-    status: "FOUND",
-    name: "Silver Laptop Charger",
-    location: "Computer Lab",
-    date: "15 Nov 2026",
-    description:
-      "A silver laptop charger was found in the computer lab. It is available for collection after ownership verification.",
-  },
-  {
-    id: 5,
-    status: "LOST",
-    name: "Car Keys",
-    location: "Main Gate",
-    date: "14 Nov 2026",
-    description:
-      "A set of car keys was reported lost near the main gate. Please provide a description of the keyring when contacting the office.",
-  },
-  {
-    id: 6,
-    status: "FOUND",
-    name: "Blue Water Bottle",
-    location: "Football Field",
-    date: "13 Nov 2026",
-    description:
-      "A blue water bottle was found near the football field. Bring any identifying details to verify ownership.",
-  },
-];
 
 export default function Items() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [reportedItems, setReportedItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/reports")
+      .then((response) => {
+        if (!response.ok) throw new Error("Failed to fetch reports");
+        return response.json();
+      })
+      .then((reports) => {
+        const normalizedReports = reports
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+          .map((report) => ({
+            id: report.id,
+            status: report.type?.toUpperCase() || "LOST",
+            name: report.title,
+            location: report.location,
+            date: new Intl.DateTimeFormat("en-GB", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+              timeZone: "UTC",
+            }).format(new Date(report.event_date || report.created_at)),
+            category: report.category,
+            description: report.public_description,
+            statusValue: report.status,
+          }));
+
+        setReportedItems(normalizedReports);
+      })
+      .catch((error) => {
+        console.error(error);
+        setLoadError(true);
+        setReportedItems([]);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   const filteredItems = reportedItems.filter((item) => {
     const matchesStatus =
@@ -109,7 +90,11 @@ export default function Items() {
         </div>
       </section>
 
-      {filteredItems.length > 0 ? (
+      {loading ? (
+        <p className="items-no-results">Loading...</p>
+      ) : loadError ? (
+        <p className="items-no-results">Failed to load items</p>
+      ) : filteredItems.length > 0 ? (
         <section className="all-items-grid">
           {filteredItems.map((item) => (
             <article className="all-item-card" key={item.id}>
@@ -129,6 +114,8 @@ export default function Items() {
             </article>
           ))}
         </section>
+      ) : reportedItems.length === 0 ? (
+        <p className="items-no-results">No items reported yet</p>
       ) : (
         <p className="items-no-results">No items found</p>
       )}

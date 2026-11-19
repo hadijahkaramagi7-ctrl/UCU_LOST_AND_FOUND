@@ -1,14 +1,13 @@
-
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import "./Report.css";
 
-function Report() {
-  const { type: routeType } = useParams();
-  const reportType = routeType?.toLowerCase() === "found" ? "Found" : "Lost";
+function Report({ reportType }) {
+  const normalizedReportType =
+    reportType?.toLowerCase() === "found" ? "Found" : "Lost";
 
   const [formData, setFormData] = useState({
-    type: reportType,
+    type: normalizedReportType,
     itemName: "",
     category: "",
     location: "",
@@ -25,24 +24,57 @@ function Report() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    console.log("Report submitted:", formData);
-    console.log("Item image:", image);
-
-    alert("Your report has been created!");
-
-    setFormData({
-      type: reportType,
-      itemName: "",
-      category: "",
-      location: "",
-      date: "",
-      description: "",
+    console.log("Submitting:", {
+      type: formData.type,
+      title: formData.itemName,
+      category: formData.category,
     });
 
-    setImage(null);
+    try {
+      const payload = {
+        type: formData.type === "Lost" ? "lost" : "found",
+        title: formData.itemName,
+        category: formData.category,
+        public_description: formData.description,
+        private_details: "",
+        location: formData.location,
+        event_date: formData.date,
+      };
+
+      const response = await fetch("http://localhost:5000/api/reports", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        console.log("BACKEND ERROR:", data);
+        alert(
+          "Error: " +
+            (data.error || data.sqlMessage || data.message || response.status),
+        );
+        return;
+      }
+
+      alert("Report created successfully");
+
+      setFormData({
+        type: normalizedReportType,
+        itemName: "",
+        category: "",
+        location: "",
+        date: "",
+        description: "",
+      });
+      setImage(null);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to save. Is backend running?");
+    }
   };
 
   return (
@@ -51,7 +83,9 @@ function Report() {
         <header className="report-header">
           <div>
             <p className="report-eyebrow">UCU Campus Services</p>
-            <h1 id="report-title">Submit a {formData.type.toLowerCase()} item report</h1>
+            <h1 id="report-title">
+              Submit a {formData.type.toLowerCase()} item report
+            </h1>
           </div>
           <span className={`report-status ${formData.type.toLowerCase()}`}>
             {formData.type} item
@@ -59,7 +93,8 @@ function Report() {
         </header>
 
         <p className="report-intro">
-          Provide clear and accurate details to help identify and return the item.
+          Provide clear and accurate details to help identify and return the
+          item.
         </p>
 
         <form onSubmit={handleSubmit} className="report-form">
@@ -147,7 +182,9 @@ function Report() {
           </div>
 
           <div className="form-field">
-            <label htmlFor="item-image">Item image <span>(optional)</span></label>
+            <label htmlFor="item-image">
+              Item image <span>(optional)</span>
+            </label>
             <input
               id="item-image"
               type="file"
@@ -169,5 +206,7 @@ export default Report;
 
 export function ReportRoute() {
   const { type } = useParams();
-  return <Report key={type?.toLowerCase() || "lost"} />;
+  const reportType = type?.toLowerCase() || "lost";
+
+  return <Report key={reportType} reportType={reportType} />;
 }
