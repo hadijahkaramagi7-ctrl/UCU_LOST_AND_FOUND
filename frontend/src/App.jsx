@@ -6,6 +6,8 @@ import Register from "./pages/Register";
 import { ReportRoute } from "./pages/Report";
 import Items from "./pages/Items";
 import ItemDetail from "./pages/ItemDetail";
+import Claims from "./pages/Claims";
+import Admin from "./pages/Admin";
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
         <Route path="/report/:type" element={<ReportRoute />} />
         <Route path="/items" element={<Items />} />
         <Route path="/items/:id" element={<ItemDetail />} />
+        <Route path="/claims" element={<Claims />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
     </Router>
   );

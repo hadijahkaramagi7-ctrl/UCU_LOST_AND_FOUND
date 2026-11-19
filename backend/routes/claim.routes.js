@@ -48,7 +48,7 @@ router.get("/", async (req, res) => {
   try {
     // We JOIN the tables to get the item title and the claimant's name
     const query = `
-      SELECT c.id, c.evidence, c.status, c.created_at, 
+      SELECT c.id, c.evidence, c.status, c.created_at,
              r.title AS item_title, r.private_details,
              u.name AS claimant_name, u.email AS claimant_email
       FROM claims c

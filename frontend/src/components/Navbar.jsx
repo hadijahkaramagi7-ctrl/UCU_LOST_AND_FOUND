@@ -22,6 +22,12 @@ export default function Navbar() {
         <Link to="/register" style={{ color: "white", textDecoration: "none" }}>
           Register
         </Link>
+        <Link to="/items" style={{ color: "white", textDecoration: "none" }}>
+          Items
+        </Link>
+        <Link to="/claims" style={{ color: "white", textDecoration: "none" }}>
+          Claims
+        </Link>
       </div>
     </nav>
   );
