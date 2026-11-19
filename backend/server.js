@@ -9,11 +9,13 @@ app.use(express.json());
 
 // Import Routes
 const reportRoutes = require("./routes/report.routes");
-const authRoutes = require("./routes/auth.routes"); // <-- ADD THIS
+const authRoutes = require("./routes/auth.routes");
+const claimRoutes = require("./routes/claim.routes"); // <-- NEW
 
 // Use Routes
 app.use("/api/reports", reportRoutes);
-app.use("/api/auth", authRoutes); // <-- ADD THIS
+app.use("/api/auth", authRoutes);
+app.use("/api/claims", claimRoutes); // <-- NEW
 
 app.get("/api/health", (req, res) => {
   res.json({ message: "UCU Lost and Found API is running!" });
