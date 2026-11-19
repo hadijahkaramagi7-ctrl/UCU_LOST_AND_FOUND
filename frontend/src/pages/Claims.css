@@ -1,0 +1,259 @@
+.claims-page {
+  min-height: calc(100vh - 70px);
+  padding: 40px 24px 64px;
+  background: #f2f5f7;
+  color: #26383f;
+}
+
+.claims-shell {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+
+.claims-header {
+  margin-bottom: 24px;
+  padding: 28px 32px;
+  border: 1px solid #dce5e8;
+  border-left: 4px solid #21517a;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(35, 58, 69, 0.06);
+}
+
+.claims-eyebrow {
+  margin: 0 0 7px;
+  color: #21517a;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.claims-header h1 {
+  margin: 0;
+  color: #173d5c;
+  font-size: clamp(1.55rem, 3vw, 2rem);
+  line-height: 1.2;
+}
+
+.claims-header > p:last-child {
+  max-width: 720px;
+  margin: 10px 0 0;
+  color: #64757c;
+  line-height: 1.6;
+}
+
+.claims-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 380px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.claim-form-panel,
+.submitted-panel {
+  border: 1px solid #dce5e8;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(35, 58, 69, 0.06);
+}
+
+.claim-form-panel {
+  padding: 24px;
+}
+
+.claim-form-panel h2,
+.submitted-heading h2 {
+  margin: 0;
+  color: #173d5c;
+  font-size: 1.12rem;
+}
+
+.panel-intro {
+  margin: 8px 0 20px;
+  color: #718087;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.claim-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.claim-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.claim-field label {
+  color: #304650;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.claim-field label span {
+  color: #718087;
+  font-weight: 400;
+}
+
+.claim-field input,
+.claim-field textarea {
+  width: 100%;
+  border: 1px solid #cbd6da;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #26383f;
+  font: inherit;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.claim-field input {
+  min-height: 44px;
+  padding: 0 12px;
+}
+
+.claim-field textarea {
+  min-height: 120px;
+  padding: 11px 12px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.claim-field input:focus,
+.claim-field textarea:focus {
+  border-color: #21517a;
+  box-shadow: 0 0 0 3px rgba(33, 81, 122, 0.11);
+}
+
+.submit-claim {
+  min-height: 46px;
+  margin-top: 4px;
+  border: 0;
+  border-radius: 6px;
+  background: #d31f75;
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.submit-claim:hover {
+  background: #b71964;
+}
+
+.submitted-panel {
+  overflow: hidden;
+}
+
+.submitted-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 64px;
+  padding: 0 24px;
+  border-bottom: 1px solid #e4eaec;
+}
+
+.submitted-heading span {
+  color: #718087;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.claims-empty {
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.claims-empty h3 {
+  margin: 0 0 8px;
+  color: #304650;
+  font-size: 1rem;
+}
+
+.claims-empty p {
+  margin: 0;
+  color: #718087;
+}
+
+.submitted-table-wrap {
+  overflow-x: auto;
+}
+
+.submitted-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+}
+
+.submitted-table th,
+.submitted-table td {
+  padding: 15px 14px;
+  border-bottom: 1px solid #e7edef;
+  text-align: left;
+  vertical-align: top;
+}
+
+.submitted-table th {
+  background: #263f50;
+  color: #ffffff;
+  font-size: 0.76rem;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.submitted-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.submitted-table tbody tr:hover {
+  background: #fafcfc;
+}
+
+.claim-status {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.claim-status.pending {
+  background: #fff3d6;
+  color: #805c10;
+}
+
+.claim-status.approved {
+  background: #dff3e7;
+  color: #1f6840;
+}
+
+.claim-status.rejected {
+  background: #f8dddd;
+  color: #964040;
+}
+
+@media (max-width: 900px) {
+  .claims-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .claims-page {
+    padding: 24px 12px 40px;
+  }
+
+  .claims-header {
+    padding: 22px 18px;
+  }
+
+  .claim-form-panel {
+    padding: 20px 16px;
+  }
+}
