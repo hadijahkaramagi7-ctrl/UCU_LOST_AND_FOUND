@@ -6,17 +6,21 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
 
+    // This line automatically adds the UCU domain to the access number
+    const fullEmail = `${email.toLowerCase()}@students.ucu.ac.ug`;
+
     try {
       const response = await axios.post(
         "http://localhost:5000/api/auth/login",
         {
-          email: email,
+          email: fullEmail, // <-- We send the fullEmail here now!
           password: password,
         },
       );
@@ -24,7 +28,6 @@ export default function Login() {
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
 
-      // Force a page reload to update the Navbar immediately
       window.location.href = "/";
     } catch (err) {
       if (err.response && err.response.data) {
@@ -39,16 +42,16 @@ export default function Login() {
     <div
       style={{
         minHeight: "calc(100vh - 70px)",
-        backgroundImage: 'url("/ucu-campus.jpg")', // Make sure this image is also in the public folder!
+        backgroundImage: 'url("/ucu-campus.jpg")',
         backgroundSize: "cover",
         backgroundPosition: "center",
+        backgroundAttachment: "fixed",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         padding: "20px",
       }}
     >
-      {/* White Login Card */}
       <div
         style={{
           backgroundColor: "white",
@@ -60,7 +63,6 @@ export default function Login() {
           textAlign: "center",
         }}
       >
-        {/* Logo and Header */}
         <img
           src="/ucu-logo.jpg"
           alt="UCU Logo"
@@ -104,10 +106,10 @@ export default function Login() {
             <label
               style={{ fontWeight: "bold", fontSize: "0.9rem", color: "#333" }}
             >
-              Email Address
+              Access Number
             </label>
             <input
-              type="email"
+              type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               style={{
@@ -118,23 +120,24 @@ export default function Login() {
                 borderRadius: "6px",
                 boxSizing: "border-box",
               }}
-              placeholder="student@ucu.ac.ug"
+              placeholder="e.g. B36758"
               required
             />
           </div>
-          <div style={{ textAlign: "left" }}>
+          <div style={{ textAlign: "left", position: "relative" }}>
             <label
               style={{ fontWeight: "bold", fontSize: "0.9rem", color: "#333" }}
             >
               Password
             </label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               style={{
                 width: "100%",
                 padding: "12px",
+                paddingRight: "40px",
                 marginTop: "5px",
                 border: "1px solid #ccc",
                 borderRadius: "6px",
@@ -143,12 +146,63 @@ export default function Login() {
               placeholder="••••••••"
               required
             />
+
+            {/* Eye Icon Toggle */}
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: "absolute",
+                right: "12px",
+                top: "38px",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: "#666",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              {showPassword ? (
+                // Eye Off (Hide)
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              ) : (
+                // Eye (Show)
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              )}
+            </button>
           </div>
           <button
             type="submit"
             style={{
               padding: "14px",
-              backgroundColor: "#cc0066",
+              backgroundColor: "#c8102e",
               color: "white",
               border: "none",
               borderRadius: "6px",
