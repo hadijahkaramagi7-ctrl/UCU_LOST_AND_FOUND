@@ -1,13 +1,17 @@
 const mysql = require("mysql2");
-require("dotenv").config();
+const path = require("path");
 
-// Create a connection pool using the environment variables from Render
+// Load .env for local development
+require("dotenv").config({ path: path.resolve(__dirname, ".env") });
+
+// Create a connection pool
+// We use || (OR) to provide a fallback in case Render's environment variables fail
 const pool = mysql.createPool({
-  host: process.env.DB_HOST, // This will be yamabiko.proxy.rlwy.net
-  user: process.env.DB_USER, // This will be root
-  password: process.env.DB_PASSWORD, // This will be your Railway password
-  database: process.env.DB_NAME, // This will be railway
-  port: process.env.DB_PORT || 3306, // This will be 57252
+  host: process.env.DB_HOST || "yamabiko.proxy.rlwy.net",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "ljYCnENCZfWAabxUOJApBvRALpPZtroY", // Your exact password
+  database: process.env.DB_NAME || "railway",
+  port: process.env.DB_PORT || 57252,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
