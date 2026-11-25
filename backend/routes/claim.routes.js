@@ -48,13 +48,12 @@ router.get("/", async (req, res) => {
   try {
     // We JOIN the tables to get the item title and the claimant's name
     const query = `
-      SELECT c.id, c.evidence, c.status, c.created_at,
-             r.title AS item_title, r.private_details,
+      SELECT c.id, c.evidence, c.status, c.admin_reason, c.created_at, 
+             r.title AS item_title, r.private_details, r.id as report_id,
              u.name AS claimant_name, u.email AS claimant_email
       FROM claims c
       JOIN reports r ON c.report_id = r.id
       JOIN users u ON c.claimant_id = u.id
-      WHERE c.status = 'pending'
       ORDER BY c.created_at DESC
     `;
     const [claims] = await pool.query(query);
@@ -68,22 +67,21 @@ router.get("/", async (req, res) => {
 // 3. PUT: Admin approves or rejects a claim
 router.put("/:id", async (req, res) => {
   try {
-    const { status } = req.body; // 'approved' or 'rejected'
+    const { status, admin_reason } = req.body;
 
     if (!["approved", "rejected"].includes(status)) {
       return res.status(400).json({ error: "Invalid status." });
     }
 
     const [result] = await pool.query(
-      "UPDATE claims SET status = ? WHERE id = ?",
-      [status, req.params.id],
+      "UPDATE claims SET status = ?, admin_reason = ? WHERE id = ?",
+      [status, admin_reason, req.params.id],
     );
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Claim not found." });
     }
 
-    // If approved, you could also update the report status to 'claimed' here
     res.json({ message: `Claim ${status} successfully!` });
   } catch (error) {
     console.error(error);

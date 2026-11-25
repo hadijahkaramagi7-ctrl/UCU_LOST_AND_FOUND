@@ -85,7 +85,11 @@ export default function ItemDetail() {
         </div>
 
         <div className="item-detail-actions">
-          <Link to="/report" className="detail-button primary">
+          {/* FIXED: Routes to claims page and passes the item ID in the URL */}
+          <Link
+            to={`/claims?itemId=${item.id}`}
+            className="detail-button primary"
+          >
             Claim This Item
           </Link>
           <Link to="/items" className="detail-button secondary">
