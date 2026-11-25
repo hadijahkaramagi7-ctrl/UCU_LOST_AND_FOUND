@@ -1,69 +1,64 @@
-
-import React, { useState, useEffect } from 'react';
-import './Claims.css';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./Claims.css";
 
 function Claims() {
-  const [itemId, setItemId] = useState('');
-  const [itemName, setItemName] = useState('');
-  const [evidence, setEvidence] = useState('');
+  const [itemId, setItemId] = useState("");
+  const [itemName, setItemName] = useState("");
+  const [evidence, setEvidence] = useState("");
   const [claims, setClaims] = useState([]);
 
-  const studentEmail =
-    localStorage.getItem('userEmail') || 'student@ucu.ac.ug';
+  // 1. Fetch the user's claims from the database
+  const fetchMyClaims = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user) return;
+
+      // Fetch all claims (We will filter by the student's ID on the frontend for now)
+      const response = await axios.get("http://localhost:5000/api/claims");
+      const myClaims = response.data.filter(
+        (c) => c.claimant_email === user.email,
+      );
+      setClaims(myClaims);
+    } catch (error) {
+      console.error("Error fetching claims:", error);
+    }
+  };
 
   useEffect(() => {
-    try {
-      const savedClaims = JSON.parse(
-        localStorage.getItem('ucuClaims') || '[]'
-      );
-      setClaims((Array.isArray(savedClaims) ? savedClaims : []).filter(
-        claim => claim.studentEmail === studentEmail
-      ));
-    } catch {
-      setClaims([]);
-    }
-  }, [studentEmail]);
+    fetchMyClaims();
+  }, []);
 
-  const submitClaim = (e) => {
+  // 2. Submit a claim to the database
+  const submitClaim = async (e) => {
     e.preventDefault();
 
-    const newClaim = {
-      id: Date.now(),
-      itemId,
-      itemName,
-      evidence,
-      studentEmail,
-      status: 'Pending',
-      adminReason: '',
-      date: new Date().toLocaleDateString()
-    };
-
-    let allClaims = [];
     try {
-      const savedClaims = JSON.parse(
-        localStorage.getItem('ucuClaims') || '[]'
-      );
-      allClaims = Array.isArray(savedClaims) ? savedClaims : [];
-    } catch {
-      allClaims = [];
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user) {
+        alert("Please log in first.");
+        return;
+      }
+
+      await axios.post("http://localhost:5000/api/claims", {
+        report_id: itemId,
+        claimant_id: user.id,
+        evidence: evidence,
+      });
+
+      alert("Your claim has been submitted successfully!");
+
+      // Clear form
+      setItemId("");
+      setItemName("");
+      setEvidence("");
+
+      // Refresh the list
+      fetchMyClaims();
+    } catch (error) {
+      console.error("Error submitting claim:", error);
+      alert(error.response?.data?.error || "Failed to submit claim.");
     }
-
-    const updatedClaims = [...allClaims, newClaim];
-
-    localStorage.setItem(
-      'ucuClaims',
-      JSON.stringify(updatedClaims)
-    );
-
-    setClaims(updatedClaims.filter(
-      claim => claim.studentEmail === studentEmail
-    ));
-
-    setItemId('');
-    setItemName('');
-    setEvidence('');
-
-    alert('Your claim has been submitted successfully!');
   };
 
   return (
@@ -73,13 +68,16 @@ function Claims() {
           <p className="claims-eyebrow">UCU Campus Services</p>
           <h1 id="claims-page-title">Ownership Claims</h1>
           <p>
-            Submit a claim for an item recorded as found and track the status
-            of its administrative review.
+            Submit a claim for an item recorded as found and track the status of
+            its administrative review.
           </p>
         </header>
 
         <div className="claims-layout">
-          <section className="claim-form-panel" aria-labelledby="claim-form-title">
+          <section
+            className="claim-form-panel"
+            aria-labelledby="claim-form-title"
+          >
             <h2 id="claim-form-title">Submit an Ownership Claim</h2>
             <p className="panel-intro">
               Provide specific information that will assist the reviewing team
@@ -88,7 +86,7 @@ function Claims() {
 
             <form onSubmit={submitClaim} className="claim-form">
               <div className="claim-field">
-                <label htmlFor="claim-item-id">Item ID</label>
+                <label htmlFor="claim-item-id">Item ID (Report ID)</label>
                 <input
                   id="claim-item-id"
                   type="text"
@@ -131,11 +129,14 @@ function Claims() {
             </form>
           </section>
 
-          <section className="submitted-panel" aria-labelledby="submitted-title">
+          <section
+            className="submitted-panel"
+            aria-labelledby="submitted-title"
+          >
             <div className="submitted-heading">
               <h2 id="submitted-title">Submitted Claims</h2>
               <span>
-                {claims.length} {claims.length === 1 ? 'record' : 'records'}
+                {claims.length} {claims.length === 1 ? "record" : "records"}
               </span>
             </div>
 
@@ -150,7 +151,6 @@ function Claims() {
                   <thead>
                     <tr>
                       <th scope="col">Item</th>
-                      <th scope="col">Date</th>
                       <th scope="col">Status</th>
                       <th scope="col">Administrative Response</th>
                     </tr>
@@ -158,14 +158,17 @@ function Claims() {
                   <tbody>
                     {claims.map((claim) => (
                       <tr key={claim.id}>
-                        <td><strong>{claim.itemName}</strong></td>
-                        <td>{claim.date}</td>
                         <td>
-                          <span className={`claim-status ${String(claim.status).toLowerCase()}`}>
+                          <strong>{claim.item_title}</strong>
+                        </td>
+                        <td>
+                          <span
+                            className={`claim-status ${String(claim.status).toLowerCase()}`}
+                          >
                             {claim.status}
                           </span>
                         </td>
-                        <td>{claim.adminReason || 'Awaiting review'}</td>
+                        <td>{claim.admin_reason || "Awaiting review"}</td>
                       </tr>
                     ))}
                   </tbody>

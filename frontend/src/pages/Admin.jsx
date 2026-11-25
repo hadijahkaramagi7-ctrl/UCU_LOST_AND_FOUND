@@ -1,19 +1,17 @@
-
-import React, { useEffect, useState } from 'react';
-import './Admin.css';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import "./Admin.css";
 
 function Admin() {
   const [claims, setClaims] = useState([]);
   const [reasons, setReasons] = useState({});
 
-  const loadClaims = () => {
+  const loadClaims = async () => {
     try {
-      const savedClaims = JSON.parse(
-        localStorage.getItem('ucuClaims') || '[]'
-      );
-      setClaims(Array.isArray(savedClaims) ? savedClaims : []);
-    } catch {
-      setClaims([]);
+      const response = await axios.get("http://localhost:5000/api/claims");
+      setClaims(response.data);
+    } catch (error) {
+      console.error("Error loading claims:", error);
     }
   };
 
@@ -21,69 +19,31 @@ function Admin() {
     loadClaims();
   }, []);
 
-  const updateClaim = (id, status) => {
+  const updateClaim = async (id, status) => {
     const reason = reasons[id]?.trim();
 
     if (!reason) {
-      alert('Please record the reason for this decision.');
+      alert("Please record the reason for this decision.");
       return;
     }
 
-    let savedClaims = [];
     try {
-      const parsedClaims = JSON.parse(
-        localStorage.getItem('ucuClaims') || '[]'
-      );
-      savedClaims = Array.isArray(parsedClaims) ? parsedClaims : [];
-    } catch {
-      savedClaims = [];
+      await axios.put(`http://localhost:5000/api/claims/${id}`, {
+        status: status.toLowerCase(),
+        admin_reason: reason,
+      });
+
+      alert(`Claim ${status.toLowerCase()} successfully.`);
+      loadClaims();
+    } catch (error) {
+      console.error("Error updating claim:", error);
+      alert("Failed to update claim in database.");
     }
-
-    const selectedClaim = savedClaims.find(
-      claim => claim.id === id
-    );
-
-    if (!selectedClaim) return;
-
-    if (status === 'Approved') {
-      const anotherApprovedClaim = savedClaims.some(
-        claim =>
-          claim.itemId === selectedClaim.itemId &&
-          claim.status === 'Approved' &&
-          claim.id !== id
-      );
-
-      if (anotherApprovedClaim) {
-        alert('Another claim for this item has already been approved.');
-        return;
-      }
-    }
-
-    const updatedClaims = savedClaims.map(claim =>
-      claim.id === id
-        ? { ...claim, status, adminReason: reason }
-        : claim
-    );
-
-    localStorage.setItem(
-      'ucuClaims',
-      JSON.stringify(updatedClaims)
-    );
-
-    setClaims(updatedClaims);
-
-    alert(`Claim ${status.toLowerCase()} successfully.`);
   };
 
-  const pendingClaims = claims.filter(
-    claim => claim.status === 'Pending'
-  );
-  const approvedClaims = claims.filter(
-    claim => claim.status === 'Approved'
-  );
-  const rejectedClaims = claims.filter(
-    claim => claim.status === 'Rejected'
-  );
+  const pendingClaims = claims.filter((claim) => claim.status === "pending");
+  const approvedClaims = claims.filter((claim) => claim.status === "approved");
+  const rejectedClaims = claims.filter((claim) => claim.status === "rejected");
 
   return (
     <main className="admin-page">
@@ -121,7 +81,7 @@ function Admin() {
           <div className="claims-heading">
             <h2 id="claims-title">Submitted Claims</h2>
             <span>
-              {claims.length} {claims.length === 1 ? 'record' : 'records'}
+              {claims.length} {claims.length === 1 ? "record" : "records"}
             </span>
           </div>
 
@@ -131,77 +91,120 @@ function Admin() {
               <p>Submitted ownership claims will appear here.</p>
             </div>
           ) : (
-            <div className="claims-table-wrap">
-              <table className="claims-table">
+            <div className="claims-table-wrap" style={{ overflowX: "auto" }}>
+              {/* Inline styles added to force the table to fit the screen */}
+              <table
+                className="claims-table"
+                style={{ width: "100%", tableLayout: "fixed" }}
+              >
                 <thead>
                   <tr>
-                    <th scope="col">Item</th>
-                    <th scope="col">Student</th>
-                    <th scope="col">Ownership evidence</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Decision reason</th>
-                    <th scope="col">Action</th>
+                    <th scope="col" style={{ width: "15%" }}>
+                      Item
+                    </th>
+                    <th scope="col" style={{ width: "15%" }}>
+                      Student
+                    </th>
+                    <th scope="col" style={{ width: "20%" }}>
+                      Evidence
+                    </th>
+                    <th scope="col" style={{ width: "10%" }}>
+                      Status
+                    </th>
+                    <th scope="col" style={{ width: "20%" }}>
+                      Reason
+                    </th>
+                    <th scope="col" style={{ width: "20%" }}>
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {claims.map((claim) => (
                     <tr key={claim.id}>
-                      <td>
-                        <strong>{claim.itemName}</strong>
-                        <span className="item-id">Item ID: {claim.itemId}</span>
+                      <td style={{ wordWrap: "break-word" }}>
+                        <strong>{claim.item_title}</strong>
+                        <br />
+                        <small>ID: {claim.report_id}</small>
                       </td>
-                      <td>{claim.studentEmail}</td>
-                      <td className="evidence-cell">{claim.evidence}</td>
+                      <td style={{ wordWrap: "break-word" }}>
+                        {claim.claimant_email}
+                      </td>
+                      <td style={{ wordWrap: "break-word" }}>
+                        {claim.evidence}
+                      </td>
                       <td>
-                        <span className={`claim-status ${claim.status.toLowerCase()}`}>
+                        <span className={`claim-status ${claim.status}`}>
                           {claim.status}
                         </span>
                       </td>
                       <td>
-                        {claim.status === 'Pending' ? (
+                        {claim.status === "pending" ? (
                           <textarea
                             className="decision-input"
-                            rows="3"
-                            value={reasons[claim.id] || ''}
+                            rows="2"
+                            style={{ width: "100%", padding: "5px" }}
+                            value={reasons[claim.id] || ""}
                             onChange={(e) =>
                               setReasons({
                                 ...reasons,
-                                [claim.id]: e.target.value
+                                [claim.id]: e.target.value,
                               })
                             }
-                            placeholder="Enter the reason for this decision"
-                            aria-label={`Decision reason for ${claim.itemName}`}
+                            placeholder="Enter reason..."
                           />
                         ) : (
-                          <span className="recorded-reason">
-                            {claim.adminReason || 'No reason recorded'}
+                          <span
+                            style={{ wordWrap: "break-word", display: "block" }}
+                          >
+                            {claim.admin_reason || "No reason"}
                           </span>
                         )}
                       </td>
                       <td>
-                        {claim.status === 'Pending' ? (
-                          <div className="claim-actions">
+                        {claim.status === "pending" ? (
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: "5px",
+                              flexDirection: "column",
+                            }}
+                          >
                             <button
                               type="button"
-                              className="action-button approve"
-                              onClick={() =>
-                                updateClaim(claim.id, 'Approved')
-                              }
+                              onClick={() => updateClaim(claim.id, "Approved")}
+                              style={{
+                                backgroundColor: "#28a745",
+                                color: "white",
+                                padding: "8px",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                                fontWeight: "bold",
+                              }}
                             >
                               Approve
                             </button>
                             <button
                               type="button"
-                              className="action-button reject"
-                              onClick={() =>
-                                updateClaim(claim.id, 'Rejected')
-                              }
+                              onClick={() => updateClaim(claim.id, "Rejected")}
+                              style={{
+                                backgroundColor: "#dc3545",
+                                color: "white",
+                                padding: "8px",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                                fontWeight: "bold",
+                              }}
                             >
                               Reject
                             </button>
                           </div>
                         ) : (
-                          <span className="decision-complete">Decision recorded</span>
+                          <span style={{ color: "green", fontWeight: "bold" }}>
+                            Decision recorded
+                          </span>
                         )}
                       </td>
                     </tr>
