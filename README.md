@@ -1,6 +1,5 @@
 # UCU CAMPUS LOST AND FOUND SYSTEM
 
-**UGANDA CHRISTIAN UNIVERSITY**  
 **Faculty of Engineering, Design and Technology**  
 **Department of Computing and Technology**
 
