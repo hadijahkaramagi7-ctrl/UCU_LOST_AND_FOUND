@@ -5,7 +5,7 @@
 **Department of Computing and Technology**  
 **Course:** CSC1202 – Web and Mobile Applications Development
 
----
+
 
 ## 1. Project Overview
 
