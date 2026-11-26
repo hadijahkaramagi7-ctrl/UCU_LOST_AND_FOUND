@@ -1,6 +1,6 @@
 # UCU CAMPUS LOST AND FOUND SYSTEM
 
-## Uganda Christian University
+
 **Faculty of Engineering, Design and Technology**  
 **Department of Computing and Technology**  
 **Course:** CSC1202 – Web and Mobile Applications Development
